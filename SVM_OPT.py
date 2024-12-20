@@ -7,18 +7,15 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 
-# Step 1: Load the dataset
 file_path = r"C:\Users\katha\OneDrive\Desktop\ML Parameter Optimization\online_shoppers_intention.csv"
 data = pd.read_csv(file_path)
 
-# Step 2: Basic Data Analytics
 print("\nMissing Values:")
 print(data.isnull().sum())
 
 print("\nClass Distribution (Revenue):")
 print(data['Revenue'].value_counts())
 
-# Visualize class distribution
 plt.figure(figsize=(6, 4))
 sns.countplot(x='Revenue', data=data, palette='viridis', legend=False)
 plt.title("Class Distribution of Revenue")
@@ -26,14 +23,13 @@ plt.xlabel("Revenue (0: No Purchase, 1: Purchase)")
 plt.ylabel("Count")
 plt.show()
 
-# Step 3: Data Preprocessing
-# Encode categorical variables
+#categorical variables
 data['Month'] = data['Month'].astype('category').cat.codes  # Convert month names to numbers
 data['VisitorType'] = data['VisitorType'].astype('category').cat.codes  # Convert visitor type to numbers
 data['Weekend'] = data['Weekend'].astype(int)  # Convert True/False to 1/0
 data['Revenue'] = data['Revenue'].astype(int)  # Convert True/False to 1/0
 
-# Step 4: Correlation heatmap
+#Correlation heatmap
 numerical_features = data.select_dtypes(include=[np.number])
 correlation_matrix = numerical_features.corr()
 
@@ -42,7 +38,7 @@ sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap="coolwarm")
 plt.title("Correlation Heatmap of Numerical Features")
 plt.show()
 
-# Step 5: Feature distributions
+#Feature-distributions
 plt.figure(figsize=(15, 10))
 for i, column in enumerate(numerical_features.columns, 1):
     plt.subplot(5, 4, i)
@@ -52,7 +48,6 @@ for i, column in enumerate(numerical_features.columns, 1):
     plt.tight_layout()
 plt.show()
 
-# Step 6: Train-Test Splitting
 X = data.drop(columns=['Revenue'])
 y = data['Revenue']
 
@@ -61,7 +56,6 @@ for i in range(10):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=i)
     samples.append((X_train, X_test, y_train, y_test))
 
-# Step 7: SVM Optimization
 param_grid = {
     'kernel': ['linear', 'poly', 'rbf', 'sigmoid'],
     'C': [0.1, 1, 10],
@@ -89,7 +83,6 @@ print("\n--- Results Summary ---")
 for res in results:
     print(f"{res['Sample']}: Accuracy = {res['Best Accuracy']:.2f}, Parameters = {res['Best Parameters']}")
 
-# Step 8: Convergence Graph
 best_sample = max(results, key=lambda x: x['Best Accuracy'])
 
 iterations = list(range(1, len(grid_search.cv_results_['mean_test_score']) + 1))
